@@ -1,7 +1,4 @@
-//your JS code here.
-
-// Do not change code below this line
-// This code will just display the questions to the screen
+// Questions data
 const questions = [
   {
     question: "What is the capital of France?",
@@ -30,27 +27,51 @@ const questions = [
   },
 ];
 
-// Display the quiz questions and choices
+let userAnswers = JSON.parse(sessionStorage.getItem('progress')) || {};
+
 function renderQuestions() {
-  for (let i = 0; i < questions.length; i++) {
-    const question = questions[i];
+  const questionsElement = document.getElementById("questions");
+  questionsElement.innerHTML = '';
+  questions.forEach((question, index) => {
     const questionElement = document.createElement("div");
-    const questionText = document.createTextNode(question.question);
-    questionElement.appendChild(questionText);
-    for (let j = 0; j < question.choices.length; j++) {
-      const choice = question.choices[j];
+    questionElement.innerHTML = `<p>${question.question}</p>`;
+    question.choices.forEach(choice => {
       const choiceElement = document.createElement("input");
       choiceElement.setAttribute("type", "radio");
-      choiceElement.setAttribute("name", `question-${i}`);
+      choiceElement.setAttribute("name", `question-${index}`);
       choiceElement.setAttribute("value", choice);
-      if (userAnswers[i] === choice) {
-        choiceElement.setAttribute("checked", true);
+      if (userAnswers[`question-${index}`] === choice) {
+        choiceElement.checked = true;
       }
       const choiceText = document.createTextNode(choice);
       questionElement.appendChild(choiceElement);
       questionElement.appendChild(choiceText);
-    }
+      questionElement.appendChild(document.createElement("br"));
+    });
     questionsElement.appendChild(questionElement);
-  }
+  });
 }
+
+function handleSubmit() {
+  let score = 0;
+  questions.forEach((question, index) => {
+    const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+    if (selectedOption) {
+      const answer = selectedOption.value;
+      userAnswers[`question-${index}`] = answer;
+      if (answer === question.answer) {
+        score++;
+      }
+    }
+  });
+  
+  sessionStorage.setItem('progress', JSON.stringify(userAnswers));
+  
+  localStorage.setItem('score', score);
+  
+  document.getElementById("score").textContent = `Your score is ${score} out of ${questions.length}.`;
+}
+
+document.getElementById("submit").addEventListener("click", handleSubmit);
+
 renderQuestions();
