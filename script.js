@@ -1,4 +1,3 @@
-// Questions data
 const questions = [
   {
     question: "What is the capital of France?",
@@ -40,18 +39,23 @@ function renderQuestions() {
     questionElement.innerHTML = `<p>${question.question}</p>`;
 
     question.choices.forEach(choice => {
+      const choiceId = `question-${index}-choice-${choice}`;
       const choiceElement = document.createElement("input");
       choiceElement.setAttribute("type", "radio");
       choiceElement.setAttribute("name", `question-${index}`);
       choiceElement.setAttribute("value", choice);
+      choiceElement.setAttribute("id", choiceId);
 
       if (userAnswers[`question-${index}`] === choice) {
         choiceElement.checked = true;
       }
 
-      const choiceText = document.createTextNode(choice);
+      const labelElement = document.createElement("label");
+      labelElement.setAttribute("for", choiceId);
+      labelElement.textContent = choice;
+
       questionElement.appendChild(choiceElement);
-      questionElement.appendChild(choiceText);
+      questionElement.appendChild(labelElement);
       questionElement.appendChild(document.createElement("br"));
     });
 
@@ -59,7 +63,6 @@ function renderQuestions() {
   });
 }
 
-// Function to handle form submission
 function handleSubmit() {
   let score = 0;
 
@@ -74,18 +77,13 @@ function handleSubmit() {
     }
   });
 
-  // Save user answers in session storage
   sessionStorage.setItem('progress', JSON.stringify(userAnswers));
 
-  // Save score in local storage
   localStorage.setItem('score', score);
 
-  // Display score
   document.getElementById("score").textContent = `Your score is ${score} out of ${questions.length}.`;
 }
 
-// Add event listener to submit button
 document.getElementById("submit").addEventListener("click", handleSubmit);
 
-// Initial render of questions
 renderQuestions();
