@@ -46,8 +46,9 @@ function renderQuestions() {
       choiceElement.setAttribute("value", choice);
       choiceElement.setAttribute("id", choiceId);
 
+      // Check if the user has previously selected this option
       if (userAnswers[`question-${index}`] === choice) {
-        choiceElement.checked = true;
+        choiceElement.checked = true;  // Set the checked property
       }
 
       const labelElement = document.createElement("label");
@@ -62,6 +63,7 @@ function renderQuestions() {
     questionsElement.appendChild(questionElement);
   });
 }
+
 
 function handleSubmit() {
   let score = 0;
