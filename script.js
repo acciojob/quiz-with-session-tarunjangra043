@@ -1,3 +1,7 @@
+//your JS code here.
+
+// Do not change code below this line
+// This code will just display the questions to the screen
 const questions = [
   {
     question: "What is the capital of France?",
@@ -26,66 +30,48 @@ const questions = [
   },
 ];
 
-// Retrieve user answers from session storage
-let userAnswers = JSON.parse(sessionStorage.getItem('progress')) || {};
-
-// Function to render questions
 function renderQuestions() {
-  const questionsElement = document.getElementById("questions");
-  questionsElement.innerHTML = ''; // Clear previous questions
-
-  questions.forEach((question, index) => {
+  for (let i = 0; i < questions.length; i++) {
+    const question = questions[i];
     const questionElement = document.createElement("div");
-    questionElement.innerHTML = `<p>${question.question}</p>`;
-
-    question.choices.forEach(choice => {
-      const choiceId = `question-${index}-choice-${choice}`;
+    const questionText = document.createTextNode(question.question);
+    questionElement.appendChild(questionText);
+    for (let j = 0; j < question.choices.length; j++) {
+      const choice = question.choices[j];
       const choiceElement = document.createElement("input");
       choiceElement.setAttribute("type", "radio");
-      choiceElement.setAttribute("name", `question-${index}`);
+      choiceElement.setAttribute("name", question-${i});
       choiceElement.setAttribute("value", choice);
-      choiceElement.setAttribute("id", choiceId);
-
-      // Check if the user has previously selected this option
-      if (userAnswers[`question-${index}`] === choice) {
-        choiceElement.checked = true;  // Set the checked property
+      if (userAnswers[i] === choice) {
+        choiceElement.setAttribute("checked", true);
       }
-
-      const labelElement = document.createElement("label");
-      labelElement.setAttribute("for", choiceId);
-      labelElement.textContent = choice;
-
+      const choiceText = document.createTextNode(choice);
       questionElement.appendChild(choiceElement);
-      questionElement.appendChild(labelElement);
-      questionElement.appendChild(document.createElement("br"));
-    });
+      questionElement.appendChild(choiceText);
 
-    questionsElement.appendChild(questionElement);
-  });
-}
-
-
-function handleSubmit() {
-  let score = 0;
-
-  questions.forEach((question, index) => {
-    const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
-    if (selectedOption) {
-      const answer = selectedOption.value;
-      userAnswers[`question-${index}`] = answer;
-      if (answer === question.answer) {
-        score++;
-      }
+      // Move the event listener here
+      choiceElement.addEventListener('change', ((i, choice) => {
+        return function() {
+          userAnswers[i] = choice;
+          sessionStorage.setItem('progress', JSON.stringify(userAnswers));
+        }
+      })(i, choice));
     }
-  });
-
-  sessionStorage.setItem('progress', JSON.stringify(userAnswers));
-
-  localStorage.setItem('score', score);
-
-  document.getElementById("score").textContent = `Your score is ${score} out of ${questions.length}.`;
+    questionsElement.appendChild(questionElement);
+  }
 }
 
-document.getElementById("submit").addEventListener("click", handleSubmit);
-
+const questionsElement = document.getElementById('questions');
+let userAnswers = JSON.parse(sessionStorage.getItem('progress')) || [];
 renderQuestions();
+
+document.getElementById('submit').addEventListener('click', function() {
+  let score = 0;
+  for (let i = 0; i < questions.length; i++) {
+    if (userAnswers[i] === questions[i].answer) {
+      score++;
+    }
+  }
+  document.getElementById('score').innerText = 'Your score is ' + score + ' out of ' + questions.length + '.';
+  localStorage.setItem('score', score);
+});
