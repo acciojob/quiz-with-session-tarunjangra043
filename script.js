@@ -1,7 +1,3 @@
-//your JS code here.
-
-// Do not change code below this line
-// This code will just display the questions to the screen
 const questions = [
   {
     question: "What is the capital of France?",
@@ -73,5 +69,5 @@ document.getElementById('submit').addEventListener('click', function() {
     }
   }
   document.getElementById('score').innerText = 'Your score is ' + score + ' out of ' + questions.length + '.';
-  localStorage.setItem('score', score);
+  localStorage.setItem('score', score);
 });
